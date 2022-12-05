@@ -2,17 +2,20 @@
 #include<string>
 #include<iostream>
 #include<map>
+
 using namespace std;
+
 template <typename T>
 class Stack {
 	size_t size;
 	T* mem;
 	int top;
 public:
-	Stack(size_t s = 1) {
+	Stack(size_t s = 10) {
 
 		size = s;
 		top = -1;
+		//top = 0;
 		mem = new T[size];
 	}
 	Stack(const Stack& st)
@@ -22,7 +25,7 @@ public:
 		copy(st.mem, st.mem + size, mem);
 	}
 	size_t Size() {
-		return top + 1;
+		return top+1 ;
 	}
 	bool Is_Empty() {
 
@@ -30,41 +33,38 @@ public:
 	}
 	bool Is_Full() {
 
-		return top == size - 1;
+		return top == size-1 ;
 	}
-	void Push(const T& val)
+	void Push(T val)
 	{
-		if (top == size - 1)
+		if (Is_Full())
 		{
 			T* tmp = new T[size * 2];
-			copy(mem, size + mem, tmp);
+			copy(mem, mem + size, tmp);
 			delete[] mem;
 			mem = tmp;
 			size *= 2;
 		}
-		mem[++top] = val;
+		top++;
+		mem[top] = val;
+		
 	}
-	T Pop() {
-		if (Is_Empty())
-		{
-			throw - 2;
+	void Pop() {
+		if (Is_Empty()) {
+			throw - 1;
 		}
-		T tmp = mem[top];
 		top--;
-		return tmp;
 	}
 	T Top()
 	{
-		if (Is_Empty())
-		{
-			cout << "not found" << endl;
-			throw - 3;
+		if (Is_Empty()) {
+			throw - 1;
 		}
 		return mem[top];
 	}
 
 	friend ostream& operator << (ostream& ostr, Stack<T>& st) {
-		for (int i = 0; i < st.size(); i++) {
+		for (int i = 0; i < st.Size(); i++) {
 			ostr << st.mem[i] << " ";
 		}
 		return ostr;

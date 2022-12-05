@@ -3,15 +3,14 @@
 #include<iostream>
 #include<map>
 #include"Stack.h"
-#include"Polsk.h"
+//#include"Polsk.h"
+
 using namespace std;
 
 enum  TypeElement {
 	Operation,
 	Value,
-	Default
-
-
+	None
 
 };
 
@@ -19,7 +18,17 @@ class Lexema {
 	string str;  //строковое описание того, что внутри лексемы
 	TypeElement type; //метка(что это за элемент)
 public:
-	Lexema(string _str = " ", TypeElement _type = Default) : str(_str), type(_type) {}; // возможно надо заменить operation 
+	Lexema() : type(None) {};
+	Lexema(string _str, TypeElement _type) : str(_str), type(_type) {}; // возможно надо заменить operation 
+	Lexema(const Lexema& p) : str(p.str), type(p.type) {};
+	Lexema& operator=(const Lexema& p) {
+		if (this == &p) {
+			return *this;
+		}
+		str = p.str;
+		type = p.type;
+		return *this;
+	}
 	string getStr() { return str; }
 	TypeElement getType() { return type; }
 	friend ostream& operator << (ostream& out, Lexema& p) {
@@ -106,7 +115,23 @@ private:
 	size_t end;
 	T* p;
 	size_t size;
-	size_t next(int i) { return ((i + 1) % size); }
+	size_t next(size_t i) { return ((i + 1) % size); }
+
+	void Add()
+	{
+		T* pp = new T[size * 2];
+		int j = 1;
+		for (size_t i = start; i != next(end); i = next(i))
+		{
+			pp[j] = p[i];
+			j++;
+		}
+		delete[] p;
+		p = pp;
+		end = size - 1;
+		size *= 2;
+		start = 1;
+	}
 
 public:
 
@@ -117,6 +142,7 @@ public:
 		size = s;
 		p = new T[size];
 		end = 0;
+		//end = ((s-1) % size);
 		start = next(end);
 	}
 	size_t Size() { return size; }
@@ -158,21 +184,13 @@ public:
 		p = pp;
 		size *= 2;
 	}*/
-	void Add()
+	
+	T& operator[](int index)
 	{
-		T* pp = new T[size * 2];
-		size_t tmp = 1;
-		for (size_t i = start; i != next(end); i = next(i))
-		{
-			pp[tmp] = p[i];
-			tmp++;
-		}
-		delete[] p;
-		p = pp;
-		end = size - 1;
-		size *= 2;
-		start = 1;
+		return p[index];
 	}
+	
+
 
 	void Push(T val) {
 		if (Is_Full())
@@ -184,29 +202,31 @@ public:
 		end = next(end);
 		p[end] = val;
 	}
-	Queue<T>& operator=(const Queue<T>& q) {
-		if (this == &q)
+	Queue<T>& operator=(const Queue<T>& qu) {
+		if (this == &qu)
 			return *this;
 		if (size > 0)
 			delete[]p;
-		size = q.size;
-		end = q.end;
-		start = q.start;
+		size = qu.size;
+		end = qu.end;
+		start = qu.start;
 		p = new T[size]{};
 		for (int i = start; i != next(end); i = next(i)) {
-			p[i] = q.p[i];
+			p[i] = qu.p[i];
 		}
 		return *this;
 	}
 
 
-	T  Pop() {
-		if (Is_Empty())
-		{
-			throw - 2;
-		}
-		T v = p[start];
+	void Pop() {
+
 		start = next(start);
+
+	}
+	T  Top() {
+
+		T v = p[start];
+
 		return v;
 	}
 
@@ -229,9 +249,13 @@ public:
 		if (size != 0)
 			delete[] p;
 	}
+
+
+
+
 };
 
-Queue<Lexema> que(string input) {
+Queue<Lexema>que(string input) {
 	size_t i = 0;
 	string tmp = "";
 	string op = "+-*/()";
@@ -286,13 +310,7 @@ Queue<Lexema> que(string input) {
 			break;
 		}
 	}
+	
 
 	return res;
-}
-
-void print(Queue <Lexema> t) {//печать очереди
-	while (!t.Is_Empty()) {
-		//cout << t.front() << endl;
-		t.Pop();
-	}
 }

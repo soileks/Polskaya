@@ -1,42 +1,13 @@
+#include"Lexema_and_Queue.h"
+#include <vector>
 #include <string>
 #include <iostream>
-#include <stack> // сделать свой
-#include <queue> // сделать свой
-//вместо switch можно сделать список(массив) правил
-//базовый класс rool, три метода: перейти, чек и действие
-//сделать отдельными классами лексический, синтаксический анализы и транслятор
+#include"Stack.h"
+#include"Polsk.h"
 #include<map>
 
+
 using namespace std;
-
-
-
-
-
-	/*void add_Mem()
-	{
-		int* pp = new int[size * 2];
-		end = 0; //nepravilno(ne ravno 0)
-		for (size_t i = 1; i < size; i++)
-		{
-			pp[i] = p[next(end)];
-			end = next(end);
-		}
-		delete[] p;
-		p = pp;
-		size *= 2;
-	}*/
-
-
-
-
-
-
-
-
-
-
-
 
 
 int  main() {
@@ -46,10 +17,32 @@ int  main() {
 	//lex_res = lex(str);//вызываем лексический анализатор
 	//print(lex_res);
 	//void func();
-	/*string input = "140+12";
+
+	string input = "(10+10)*4/2";
+	//cout << "Input string: ";
+	//cin >> input;
+	cout <<"string: " << input << endl;
 	polsk p(input);
-	p.func();*/
-	
+	cout << "---------------------";
+	p.print_que();
+	cout << "---------------------";
+	try {
+		p.check();
+	}
+	catch (exception e) {
+		cout << e.what();
+		return 0;
+	}
+	try {
+		//p.check();
+		p.transl();
+	}
+	catch (exception e) {
+		cout << e.what();
+		
+		return 0;
+	}
+	p.calc_stream();
 	return 0;
 }
 
